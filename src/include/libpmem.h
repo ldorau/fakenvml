@@ -181,6 +181,7 @@ void *pmemobj_direct(PMEMoid oid);
 void *pmemobj_direct_ntx(PMEMoid oid);
 
 int pmemobj_nulloid(PMEMoid oid);
+int pmemobj_oids_equal(PMEMoid oida, PMEMoid oidb);
 
 int pmemobj_memcpy(void *dstp, void *srcp, size_t size);
 int pmemobj_memcpy_tid(PMEMtid tid, void *dstp, void *srcp, size_t size);

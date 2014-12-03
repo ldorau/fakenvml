@@ -1129,6 +1129,15 @@ pmemobj_nulloid(PMEMoid oid)
 }
 
 /*
+ * pmemobj_oids_equal -- true if objects ID are equal
+ */
+int
+pmemobj_oids_equal(PMEMoid oida, PMEMoid oidb)
+{
+	return ((oida.pool == oidb.pool) && (oida.off == oidb.off));
+}
+
+/*
  * pmemobj_memcpy -- change a range, making undo log entries, implicit tid
  */
 int

@@ -89,6 +89,7 @@ libpmem.so {
 		pmemobj_direct;
 		pmemobj_direct_ntx;
 		pmemobj_nulloid;
+		pmemobj_oids_equal;
 		pmemobj_memcpy;
 		pmemobj_memcpy_tid;
 		pmemblk_map;
