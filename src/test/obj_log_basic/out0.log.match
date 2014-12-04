@@ -1,0 +1,36 @@
+obj_log_basic/TEST0: START: obj_log_basic
+ ./obj_log_basic$(*) $(*)/testfile1
+Size:
+Walk all:
+1st test string
+2nd test string
+3rd test string
+4th test string
+5th test string
+6th test string
+
+Walk by 16:
+1st test string
+
+2nd test string
+
+3rd test string
+
+4th test string
+
+5th test string
+
+6th test string
+
+Current write point: 96
+
+Rewind
+
+Current write point after rewind: 0
+
+Walk all (should be empty):
+
+Walk all (should be '6th test string'):
+6th test string
+
+obj_log_basic/TEST0: Done

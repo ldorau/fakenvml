@@ -1,0 +1,8 @@
+Linux NVM Library
+
+This is src/test/obj_log_basic/README.
+
+This directory contains a very basic log example based on pmemobj.
+
+Run:
+	obj_log_basic file
