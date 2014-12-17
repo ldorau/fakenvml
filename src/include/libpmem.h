@@ -192,6 +192,36 @@ int pmemobj_memcpy_tid(PMEMtid tid, void *dstp, void *srcp, size_t size);
 	pmemobj_memcpy_tid(tid, (void *)&(lhs), (void *)&(rhs), sizeof (lhs))
 
 /*
+ * support for doubly linked list
+ */
+#define	PMEM(x)  PMEMoid
+#define	PMEMLIST PMEM(PMEMlist *)
+
+typedef struct PMEMlist_s {
+	PMEM(PMEMlist *) next;
+	PMEM(PMEMlist *) prev;
+} PMEMlist;
+
+int pmemobj_list_init_head(PMEMobjpool *pool, PMEMLIST head);
+int pmemobj_list_add(PMEMobjpool *pool, PMEMLIST new, PMEMLIST head);
+int pmemobj_list_add_tail(PMEMobjpool *pool, PMEMLIST new, PMEMLIST head);
+int pmemobj_list_del(PMEMobjpool *pool, PMEMLIST item);
+int pmemobj_list_replace(PMEMobjpool *pool, PMEMLIST old, PMEMLIST new);
+int pmemobj_list_is_last(PMEMLIST item, PMEMLIST head);
+int pmemobj_list_empty(PMEMLIST head);
+
+#define	PMEMOBJ_LIST_FOREACH(pos, head)				\
+	for (pos = ((PMEMlist *)pmemobj_direct(head))->next;	\
+		! pmemobj_oids_equal(pos, (head)); 		\
+		pos = ((PMEMlist *)pmemobj_direct(pos))->next)
+
+#define	PMEMOBJ_LIST_FOREACH_BACK(pos, head)			\
+	for (pos = ((PMEMlist *)pmemobj_direct(head))->prev;	\
+		! pmemobj_oids_equal(pos, (head)); 		\
+		pos = ((PMEMlist *)pmemobj_direct(pos))->prev)
+
+
+/*
  * support for arrays of atomically-writable blocks...
  */
 #define	PMEMBLK_MIN_POOL ((size_t)(1024 * 1024 * 1024)) /* min pool size: 1GB */

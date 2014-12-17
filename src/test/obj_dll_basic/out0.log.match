@@ -1,0 +1,31 @@
+obj_dll_basic/TEST0: START: obj_dll_basic
+ ./obj_dll_basic$(*) $(*)/testfile1
+list contains:
+    value 6
+    value 5
+    value 4
+    value 3
+    value 2
+    value 1
+list contains:
+    value 6
+    value 5
+    value 4
+    value 2
+    value 1
+list contains:
+    value 6
+    value 5
+    value 3
+    value 2
+    value 1
+list contains:
+    value 6
+    value 5
+    value 3
+    value 2
+    value 1
+    value 70
+    value 80
+    value 90
+obj_dll_basic/TEST0: Done

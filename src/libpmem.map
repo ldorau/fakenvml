@@ -92,6 +92,13 @@ libpmem.so {
 		pmemobj_oids_equal;
 		pmemobj_memcpy;
 		pmemobj_memcpy_tid;
+		pmemobj_list_init_head;
+		pmemobj_list_add;
+		pmemobj_list_add_tail;
+		pmemobj_list_del;
+		pmemobj_list_replace;
+		pmemobj_list_is_last;
+		pmemobj_list_empty;
 		pmemblk_map;
 		pmemblk_unmap;
 		pmemblk_nblock;

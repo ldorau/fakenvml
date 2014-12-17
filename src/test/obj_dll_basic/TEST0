@@ -1,3 +1,4 @@
+#!/bin/bash -e
 #
 # Copyright (c) 2014, Intel Corporation
 #
@@ -31,27 +32,21 @@
 #
 
 #
-# src/test/Makefile -- build all unit tests
+# src/test/obj_dll_basic/TEST0 -- unit test for obj_dll_basic
 #
-# Makefile -- build all unit tests
-#
-TEST = obj_list_basic\
-       obj_list_strdup\
-       obj_dll_basic\
-       obj_basic
+export UNITTEST_NAME=obj_dll_basic/TEST0
+export UNITTEST_NUM=0
 
-all     : TARGET = all
-clean   : TARGET = clean
-clobber : TARGET = clobber
-test    : TARGET = test
-cstyle  : TARGET = cstyle
+# standard unit test setup
+. ../unittest/unittest.sh
 
-all clean clobber test cstyle: $(TEST)
+setup
 
-$(TEST): unittest
-	$(MAKE) -C $@ $(TARGET)
+rm -f $DIR/testfile1
+truncate -s 1G $DIR/testfile1
+expect_normal_exit ./obj_dll_basic$EXESUFFIX $DIR/testfile1
+rm $DIR/testfile1
 
-unittest:
-	$(MAKE) -C $@ $(TARGET)
+check
 
-.PHONY: all clean clobber test cstyle unittest $(TEST)
+pass

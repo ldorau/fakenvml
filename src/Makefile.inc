@@ -62,7 +62,7 @@ LIBPMEM_SONAME=$(LIBPMEMSO).$(PMEMSOVERSION)
 LIBPMEM_REALNAME=$(LIBPMEM_SONAME).$(PMEMLIBVERSION)
 
 COMMONOBJS = out.o util.o
-PMEMOBJS = libpmem.o blk.o btt.o log.o obj.o pmem.o allocator.o $(COMMONOBJS)
+PMEMOBJS = libpmem.o blk.o btt.o log.o obj.o obj_list.o pmem.o allocator.o $(COMMONOBJS)
 PMEMMAPFILE = ../libpmem.map
 TARGET_LIBS = $(LIBPMEMAR) $(LIBPMEM_REALNAME)
 TARGET_LINKS= $(LIBPMEMSO) $(LIBPMEM_SONAME)
@@ -106,7 +106,7 @@ btt.o: btt.c util.h btt.h btt_layout.h
 log.o: log.c libpmem.h pmem.h log.h util.h out.h
 pmem.o: pmem.c libpmem.h pmem.h out.h
 obj.o: obj.c libpmem.h pmem.h obj.h util.h out.h allocator.h
+obj_list.o: obj_list.c libpmem.h obj_list.h
 allocator.o: allocator.c
-
 out.o: out.c out.h
 util.o: util.c util.h out.h

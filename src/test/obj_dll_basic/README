@@ -1,0 +1,10 @@
+Linux NVM Library
+
+This is src/test/obj_dll_basic/README.
+
+This directory contains a simple doubly linked list test for pmemobj.
+
+Run:
+	obj_dll_basic file
+
+to access a pmemobj doubly linked list data structure in the given file.
