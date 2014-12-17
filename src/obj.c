@@ -66,6 +66,25 @@ typedef enum {
 	TXOP_SET,
 } op_t;
 
+struct txop {
+	op_t op;
+	void *next;
+	void *prev;
+	union txop_args {
+		struct {
+			uint64_t addr;
+		} alloc;
+		struct {
+			uint64_t addr;
+		} free;
+		struct {
+			void *addr;
+			uint64_t data;
+			size_t len;
+		} set;
+	} args;
+};
+
 struct tx {
 	int valid_env;
 	jmp_buf env;
@@ -77,24 +96,6 @@ struct tx {
 	/* one of these is pushed for each operation in a transaction */
 	struct txop *head;
 	struct txop *tail;
-	struct txop {
-		op_t op;
-		void *next;
-		void *prev;
-		union txop_args {
-			struct {
-				uint64_t addr;
-			} alloc;
-			struct {
-				uint64_t addr;
-			} free;
-			struct {
-				void *addr;
-				uint64_t data;
-				size_t len;
-			} set;
-		} args;
-	} *txops;
 };
 
 typedef void (*pmemobj_txop_onaction_t)(struct tx *txp, union txop_args args);
