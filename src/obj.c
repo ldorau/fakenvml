@@ -73,7 +73,7 @@ struct tx {
 	PMEMrwlock *rwlockp;
 	PMEMobjpool *pool;
 
-	struct tx *next;	/* outer transaction when nested */
+	struct tx *nexttx;	/* outer transaction when nested */
 	/* one of these is pushed for each operation in a transaction */
 	struct txop *head;
 	struct txop *tail;
@@ -705,9 +705,9 @@ pmemobj_tx_begin(PMEMobjpool *pop, jmp_buf env)
 		struct txinfo *txinfop = zalloc(sizeof (*txinfop));
 		txinfop->txp = txp;
 		Curthread_txinfop = txinfop;
-		txp->next = NULL;
+		txp->nexttx = NULL;
 	} else {
-		txp->next = Curthread_txinfop->txp;
+		txp->nexttx = Curthread_txinfop->txp;
 		Curthread_txinfop->txp = txp;
 	}
 
@@ -774,7 +774,7 @@ int
 pmemobj_tx_action_tid(PMEMtid tid, pmemobj_txop_onaction_t *actions)
 {
 	struct tx *tx = (struct tx *)tid;
-	if (tx->next == NULL) {
+	if (tx->nexttx == NULL) {
 		struct txop *op = tx->tail;
 		for (; op != NULL; op = op->prev) {
 			actions[op->op](tx, op->args);
@@ -783,10 +783,10 @@ pmemobj_tx_action_tid(PMEMtid tid, pmemobj_txop_onaction_t *actions)
 		free(Curthread_txinfop);
 		Curthread_txinfop = NULL;
 	} else {
-		tx->head->prev = tx->next->tail;
-		tx->next->tail->next = tx->head;
-		tx->next->tail = tx->tail;
-		Curthread_txinfop->txp = tx->next;
+		tx->head->prev = tx->nexttx->tail;
+		tx->nexttx->tail->next = tx->head;
+		tx->nexttx->tail = tx->tail;
+		Curthread_txinfop->txp = tx->nexttx;
 		free(tx);
 	}
 
