@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Intel Corporation
+ * Copyright (c) 2014-2015, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -336,8 +336,10 @@ mutexof(PMEMmutex *mutexp)
 		return NULL;
 	else if ((errno = pthread_mutex_init(mutexp->pthread_mutexp, NULL)))
 		return NULL;
-	else
+	else {
+		mutexp->runid = Runid;
 		return mutexp->pthread_mutexp;	/* newly allocated */
+	}
 }
 
 /*
@@ -355,8 +357,10 @@ rwlockof(PMEMrwlock *rwlockp)
 		return NULL;
 	else if ((errno = pthread_rwlock_init(rwlockp->pthread_rwlockp, NULL)))
 		return NULL;
-	else
+	else {
+		rwlockp->runid = Runid;
 		return rwlockp->pthread_rwlockp;	/* newly allocated */
+	}
 }
 
 /*
@@ -374,8 +378,10 @@ condof(PMEMcond *condp)
 		return NULL;
 	else if ((errno = pthread_cond_init(condp->pthread_condp, NULL)))
 		return NULL;
-	else
+	else {
+		condp->runid = Runid;
 		return condp->pthread_condp;	/* newly allocated */
+	}
 }
 
 /*
@@ -794,11 +800,29 @@ pmemobj_tx_action_tid(PMEMtid tid, pmemobj_txop_onaction_t *actions)
 }
 
 /*
+ * pmemobj_unlock_locks_tid -- (internal) unlock locks held by tid
+ */
+static void
+pmemobj_unlock_locks_tid(PMEMtid tid)
+{
+	struct tx *txp = (struct tx *)tid;
+	if (txp->mutexp) {
+		pmemobj_mutex_unlock(txp->mutexp);
+		txp->mutexp = NULL;
+	}
+	if (txp->rwlockp) {
+		pmemobj_rwlock_unlock(txp->rwlockp);
+		txp->rwlockp = NULL;
+	}
+}
+
+/*
  * pmemobj_tx_commit_tid -- commit transaction
  */
 int
 pmemobj_tx_commit_tid(PMEMtid tid)
 {
+	pmemobj_unlock_locks_tid(tid);
 	return pmemobj_tx_action_tid(tid, oncommit_funcs);
 }
 
@@ -869,6 +893,7 @@ pmemobj_tx_abort(int errnum)
 int
 pmemobj_tx_abort_tid(PMEMtid tid, int errnum)
 {
+	pmemobj_unlock_locks_tid(tid);
 	return pmemobj_tx_action_tid(tid, onabort_funcs);
 }
 
