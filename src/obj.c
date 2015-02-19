@@ -794,11 +794,29 @@ pmemobj_tx_action_tid(PMEMtid tid, pmemobj_txop_onaction_t *actions)
 }
 
 /*
+ * pmemobj_unlock_locks_tid -- (internal) unlock locks held by tid
+ */
+static void
+pmemobj_unlock_locks_tid(PMEMtid tid)
+{
+	struct tx *txp = (struct tx *)tid;
+	if (txp->mutexp) {
+		pmemobj_mutex_unlock(txp->mutexp);
+		txp->mutexp = NULL;
+	}
+	if (txp->rwlockp) {
+		pmemobj_rwlock_unlock(txp->rwlockp);
+		txp->rwlockp = NULL;
+	}
+}
+
+/*
  * pmemobj_tx_commit_tid -- commit transaction
  */
 int
 pmemobj_tx_commit_tid(PMEMtid tid)
 {
+	pmemobj_unlock_locks_tid(tid);
 	return pmemobj_tx_action_tid(tid, oncommit_funcs);
 }
 
@@ -869,6 +887,7 @@ pmemobj_tx_abort(int errnum)
 int
 pmemobj_tx_abort_tid(PMEMtid tid, int errnum)
 {
+	pmemobj_unlock_locks_tid(tid);
 	return pmemobj_tx_action_tid(tid, onabort_funcs);
 }
 
